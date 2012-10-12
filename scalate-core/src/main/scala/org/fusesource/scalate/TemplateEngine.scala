@@ -243,8 +243,8 @@ class TemplateEngine(var sourceDirectories: Traversable[File] = None, var mode: 
   private var _workingDirectory: File = null
 
   var classLoader = Thread.currentThread.getContextClassLoader match {
-    case BundleClassLoader(_) => Thread.currentThread.getContextClassLoader()
-    case _ => getClass().getClassLoader()
+    case null => this.getClass.getClassLoader
+    case _ => Thread.currentThread.getContextClassLoader()
   }
 
   /**
