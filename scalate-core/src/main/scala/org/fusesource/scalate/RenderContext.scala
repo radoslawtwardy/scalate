@@ -327,13 +327,36 @@ trait RenderContext {
 
     val classSearchList = new ListBuffer[Class[_]]()
 
-    def buildClassList(clazz: Class[_]): Unit = {
+    def addSuperclasses(clazz: Class[_]) {
       if (clazz != null && clazz != classOf[Object] && !classSearchList.contains(clazz)) {
-        classSearchList.append(clazz);
-        buildClassList(clazz.getSuperclass)
-        for (i <- clazz.getInterfaces) {
-          buildClassList(i)
+        classSearchList.append(clazz)
+        addSuperclasses(clazz.getSuperclass)
+      }
+    }
+
+    def getInterfaces(clazzs: ListBuffer[Class[_]]) = {
+
+      val newInterfaces = new ListBuffer[Class[_]]()
+
+      clazzs.toSeq.foreach {
+        cl =>
+          for (i <- cl.getInterfaces) {
+          if (i != null && i != classOf[Object] && !classSearchList.contains(i)) {
+            newInterfaces.append(i)
+          }
         }
+      }
+      newInterfaces
+
+    }
+
+    def buildClassList(clazz: Class[_]): Unit = {
+      addSuperclasses(clazz)
+      var listToIterate =  classSearchList
+
+      while(listToIterate.size > 0){
+        listToIterate = getInterfaces(listToIterate)
+        classSearchList.appendAll(listToIterate)
       }
     }
 
