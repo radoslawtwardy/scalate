@@ -316,9 +316,19 @@ trait RenderContext {
     }
   }
 
-  /**
+    /**
    * Renders the view of the given model object, looking for the view in
    * packageName/className.viewName.ext
+   *
+   * modify:
+   * actual strategy:
+   * -get tamplate for given class
+   * -if not exist get template for superclass
+   * -if not exist get template for next superclass, etc ....
+   * -if not exist get template for directly interface of given class
+   * -if not exist get template for directly interface of superclass, next superclass, etc .....
+   * -if not exist get template for directly interface of directly interface of given class, superclass, next superclass, etc
+   * -if not exist : next level of interfaces
    */
   def view(model: AnyRef, viewName: String = "index"): Unit = {
     if (model == null) {
